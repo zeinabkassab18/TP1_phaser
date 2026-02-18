@@ -180,8 +180,8 @@ function update() {
     player.anims.play("anim_face", true);
   }
 
-  if (clavier.up.isDown && player.body.blocked.down) {
-    player.setVelocityY(-200);
+  if (clavier.space.isDown && player.body.blocked.down) {
+    player.setVelocityY(-400);
   }
 }
 
