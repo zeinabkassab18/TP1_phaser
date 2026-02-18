@@ -139,9 +139,11 @@ function create() {
   );
   // définition des tuiles de plateformes qui sont solides
   // utilisation de la propriété estSolide
-  calque_plateformes.setCollisionByProperty({ estSolide: true });
+  calque_plateformes.setCollisionByProperty({ estsolide: true });
   // ajout d'une collision entre le joueur et le calque plateformes
   this.physics.add.collider(player, calque_plateformes);
+  this.physics.add.collider(groupe_etoiles, calque_plateformes);
+  
   // redimentionnement du monde avec les dimensions calculées via tiled
   this.physics.world.setBounds(0, 0, 3200, 640);
   //  ajout du champs de la caméra de taille identique à celle du monde
