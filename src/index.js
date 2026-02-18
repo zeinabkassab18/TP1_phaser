@@ -17,7 +17,7 @@ var config = {
       gravity: {
         y: 300 // gravité verticale : acceleration ddes corps en pixels par seconde
       },
-      debug: false // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
+      debug: true // permet de voir les hitbox et les vecteurs d'acceleration quand mis à true
     }
   },
   scene: {
@@ -48,6 +48,11 @@ function preload() {
     frameWidth: 32,
     frameHeight: 48
   });
+  // chargement tuiles de jeu
+this.load.image("Phaser_tuilesdejeu", "src/assets/tuilesJeu.png");
+
+// chargement de la carte
+this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
 }
 
 /***********************************************************************/
@@ -116,6 +121,43 @@ function create() {
   zone_texte_score = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
   groupe_bombes = this.physics.add.group();
   this.physics.add.collider(groupe_bombes, groupe_plateformes);
+  // chargement de la carte
+const carteDuNiveau = this.add.tilemap("carte");
+
+// chargement du jeu de tuiles
+const tileset = carteDuNiveau.addTilesetImage(
+          "tuiles_de_jeu",
+          "Phaser_tuilesdejeu"
+        );  
+  // chargement du calque calque_background
+const calque_background = carteDuNiveau.createLayer(
+          "calque_background",
+          tileset
+        );
+
+// chargement du calque calque_background_2
+const calque_background_2 = carteDuNiveau.createLayer(
+          "calque_background_2",
+          tileset
+        );
+
+// chargement du calque calque_plateformes
+const calque_plateformes = carteDuNiveau.createLayer(
+          "calque_plateformes",
+          tileset
+        );  
+ // définition des tuiles de plateformes qui sont solides
+// utilisation de la propriété estSolide
+calque_plateformes.setCollisionByProperty({ estSolide: true }); 
+// ajout d'une collision entre le joueur et le calque plateformes
+this.physics.add.collider(player, calque_plateformes); 
+// redimentionnement du monde avec les dimensions calculées via tiled
+this.physics.world.setBounds(0, 0, 3200, 640);
+//  ajout du champs de la caméra de taille identique à celle du monde
+this.cameras.main.setBounds(0, 0, 3200, 640);
+// ancrage de la caméra sur le joueur
+this.cameras.main.startFollow(player);  
+player.setDepth(100) ;
 }
 /***********************************************************************/
 /** FONCTION UPDATE 
@@ -145,9 +187,9 @@ this.physics.add.collider(player, groupe_bombes, chocAvecBombe, null, this);
     player.anims.play("anim_face", true);
   }
 
-  if (clavier.space.isDown && player.body.touching.down) {
-    player.setVelocityY(-400);
-  }
+  if (clavier.up.isDown && player.body.blocked.down) {
+          player.setVelocityY(-200);
+        }  
 }
 
 
