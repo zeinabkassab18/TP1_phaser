@@ -49,10 +49,10 @@ function preload() {
     frameHeight: 48
   });
   // chargement tuiles de jeu
-this.load.image("Phaser_tuilesdejeu", "src/assets/tuilesJeu.png");
+  this.load.image("Phaser_tuilesdejeu", "src/assets/tuilesJeu.png");
 
-// chargement de la carte
-this.load.tilemapTiledJSON("carte", "src/assets/map.json");  
+  // chargement de la carte
+  this.load.tilemapTiledJSON("carte", "src/assets/map.json");
 }
 
 /***********************************************************************/
@@ -66,16 +66,8 @@ this.load.tilemapTiledJSON("carte", "src/assets/map.json");
  * ainsi que toutes les instructions permettant de planifier des evenements
  */
 function create() {
-  this.add.image(400, 300, "img_ciel");
-  groupe_plateformes = this.physics.add.staticGroup();
-  groupe_plateformes.create(200, 584, "img_plateforme");
-  groupe_plateformes.create(600, 584, "img_plateforme");
-  groupe_plateformes.create(50, 300, "img_plateforme");
-  groupe_plateformes.create(600, 450, "img_plateforme");
-  groupe_plateformes.create(750, 270, "img_plateforme");
-  player = this.physics.add.sprite(100, 450, 'img_perso');
+  player = this.physics.add.sprite(300, 150, "img_perso"); 
   player.setCollideWorldBounds(true);
-  this.physics.add.collider(player, groupe_plateformes);
   player.setBounce(0.2);
   clavier = this.input.keyboard.createCursorKeys();
   // dans cette partie, on crée les animations, à partir des spritesheet
@@ -105,7 +97,6 @@ function create() {
     var coordX = 70 + 70 * i;
     groupe_etoiles.create(coordX, 10, "img_etoile");
   }
-  this.physics.add.collider(groupe_etoiles, groupe_plateformes);
   groupe_etoiles.children.iterate(function iterateur(etoile_i) {
     // On tire un coefficient aléatoire de rerebond : valeur entre 0.4 et 0.8
     var coef_rebond = Phaser.Math.FloatBetween(0.4, 0.8);
@@ -122,58 +113,58 @@ function create() {
   groupe_bombes = this.physics.add.group();
   this.physics.add.collider(groupe_bombes, groupe_plateformes);
   // chargement de la carte
-const carteDuNiveau = this.add.tilemap("carte");
+  const carteDuNiveau = this.add.tilemap("carte");
 
-// chargement du jeu de tuiles
-const tileset = carteDuNiveau.addTilesetImage(
-          "tuiles_de_jeu",
-          "Phaser_tuilesdejeu"
-        );  
+  // chargement du jeu de tuiles
+  const tileset = carteDuNiveau.addTilesetImage(
+    "tuiles_de_jeu",
+    "Phaser_tuilesdejeu"
+  );
   // chargement du calque calque_background
-const calque_background = carteDuNiveau.createLayer(
-          "calque_background",
-          tileset
-        );
+  const calque_background = carteDuNiveau.createLayer(
+    "calque_background",
+    tileset
+  );
 
-// chargement du calque calque_background_2
-const calque_background_2 = carteDuNiveau.createLayer(
-          "calque_background_2",
-          tileset
-        );
+  // chargement du calque calque_background_2
+  const calque_background_2 = carteDuNiveau.createLayer(
+    "Calque de Tuiles 1",
+    tileset
+  );
 
-// chargement du calque calque_plateformes
-const calque_plateformes = carteDuNiveau.createLayer(
-          "calque_plateformes",
-          tileset
-        );  
- // définition des tuiles de plateformes qui sont solides
-// utilisation de la propriété estSolide
-calque_plateformes.setCollisionByProperty({ estSolide: true }); 
-// ajout d'une collision entre le joueur et le calque plateformes
-this.physics.add.collider(player, calque_plateformes); 
-// redimentionnement du monde avec les dimensions calculées via tiled
-this.physics.world.setBounds(0, 0, 3200, 640);
-//  ajout du champs de la caméra de taille identique à celle du monde
-this.cameras.main.setBounds(0, 0, 3200, 640);
-// ancrage de la caméra sur le joueur
-this.cameras.main.startFollow(player);  
-player.setDepth(100) ;
+  // chargement du calque calque_plateformes
+  const calque_plateformes = carteDuNiveau.createLayer(
+    "calque_plateformes",
+    tileset
+  );
+  // définition des tuiles de plateformes qui sont solides
+  // utilisation de la propriété estSolide
+  calque_plateformes.setCollisionByProperty({ estSolide: true });
+  // ajout d'une collision entre le joueur et le calque plateformes
+  this.physics.add.collider(player, calque_plateformes);
+  // redimentionnement du monde avec les dimensions calculées via tiled
+  this.physics.world.setBounds(0, 0, 3200, 640);
+  //  ajout du champs de la caméra de taille identique à celle du monde
+  this.cameras.main.setBounds(0, 0, 3200, 640);
+  // ancrage de la caméra sur le joueur
+  this.cameras.main.startFollow(player);
+  player.setDepth(100);
 }
 /***********************************************************************/
 /** FONCTION UPDATE 
 /***********************************************************************/
 
 function update() {
-if (gameOver) {
- return;
- }
- function chocAvecBombe(un_player, une_bombe) {
- this.physics.pause();
- player.setTint(0xff0000);
- player.anims.play("anim_face");
- gameOver = true;
-}
-this.physics.add.collider(player, groupe_bombes, chocAvecBombe, null, this); 
+  if (gameOver) {
+    return;
+  }
+  function chocAvecBombe(un_player, une_bombe) {
+    this.physics.pause();
+    player.setTint(0xff0000);
+    player.anims.play("anim_face");
+    gameOver = true;
+  }
+  this.physics.add.collider(player, groupe_bombes, chocAvecBombe, null, this);
   if (clavier.right.isDown) {
     player.setVelocityX(160);
     player.anims.play("anim_tourne_droite", true);
@@ -188,8 +179,8 @@ this.physics.add.collider(player, groupe_bombes, chocAvecBombe, null, this);
   }
 
   if (clavier.up.isDown && player.body.blocked.down) {
-          player.setVelocityY(-200);
-        }  
+    player.setVelocityY(-200);
+  }
 }
 
 
@@ -207,21 +198,21 @@ function ramasserEtoile(un_player, une_etoile) {
     });
   }
   score += 10;
- zone_texte_score.setText("Score: " + score);
- // on ajoute une nouvelle bombe au jeu
- // - on génère une nouvelle valeur x qui sera l'abcisse de la bombe
- var x;
- if (player.x < 400) {
- x = Phaser.Math.Between(400, 800);
- } else {
- x = Phaser.Math.Between(0, 400);
- }
- var une_bombe = groupe_bombes.create(x, 16, "img_bombe");
- une_bombe.setBounce(1);
- une_bombe.setCollideWorldBounds(true);
- une_bombe.setVelocity(Phaser.Math.Between(-200, 200), 20);
- une_bombe.allowGravity = false;
- }
+  zone_texte_score.setText("Score: " + score);
+  // on ajoute une nouvelle bombe au jeu
+  // - on génère une nouvelle valeur x qui sera l'abcisse de la bombe
+  var x;
+  if (player.x < 400) {
+    x = Phaser.Math.Between(400, 800);
+  } else {
+    x = Phaser.Math.Between(0, 400);
+  }
+  var une_bombe = groupe_bombes.create(x, 16, "img_bombe");
+  une_bombe.setBounce(1);
+  une_bombe.setCollideWorldBounds(true);
+  une_bombe.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  une_bombe.allowGravity = false;
+}
 
 
 
